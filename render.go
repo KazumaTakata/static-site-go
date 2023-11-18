@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/alecthomas/chroma/styles"
 	"github.com/yuin/goldmark"
@@ -18,20 +20,41 @@ func renderHTML() {
 		panic("Parse failed!!")
 	}
 
-	dat, _ := os.ReadFile("source/sample.md")
-	var buf bytes.Buffer
-	if err := goldmark.Convert(dat, &buf); err != nil {
-		panic(err)
-	}
+	destinationPath := "dist"
+	sourcePath := "source"
 
-	var htmlOutputBuffer bytes.Buffer
+	_ = filepath.Walk(sourcePath, func(path string, info os.FileInfo, err error) error {
+		if err == nil {
+			pathWithoutRoot := strings.Join(strings.Split(path, "/")[1:], "/")
 
-	tmpl.Execute(&htmlOutputBuffer, template.HTML(buf.String()))
+			if info.IsDir() {
+				_ = os.MkdirAll(filepath.Join(destinationPath, pathWithoutRoot), os.ModePerm)
+				return nil
+			}
 
-	replacedHTML, _ := replaceCodeParts(htmlOutputBuffer.Bytes(), styles.Monokai)
+			dat, _ := os.ReadFile(path)
+			var buf bytes.Buffer
+			if err := goldmark.Convert(dat, &buf); err != nil {
+				panic(err)
+			}
 
-	fmt.Println(replacedHTML)
+			var htmlOutputBuffer bytes.Buffer
 
-	os.WriteFile("dist/index.html", []byte(replacedHTML), 0644)
+			tmpl.Execute(&htmlOutputBuffer, template.HTML(buf.String()))
 
+			replacedHTML, _ := replaceCodeParts(htmlOutputBuffer.Bytes(), styles.Monokai)
+
+			destinationFilePath := filepath.Join(destinationPath, pathWithoutRoot)
+
+			fmt.Println(filepath.Ext(destinationFilePath))
+			fileExtention := filepath.Ext(destinationFilePath)
+
+			newFilePath := destinationFilePath[0:len(destinationFilePath)-len(fileExtention)] + ".html"
+
+			os.WriteFile(newFilePath, []byte(replacedHTML), 0644)
+
+		}
+
+		return nil
+	})
 }

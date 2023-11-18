@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -51,7 +52,7 @@ func main() {
 		log.Fatal("Add failed:", err)
 	}
 
-	fs := http.FileServer(http.Dir("./dist"))
+	fs := http.FileServer(HTMLDir{http.Dir("dist")})
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(w, r, fileChanged)
@@ -64,4 +65,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+type HTMLDir struct {
+	d http.Dir
+}
+
+func (d HTMLDir) Open(name string) (http.File, error) {
+	// Try name as supplied
+	f, err := d.d.Open(name)
+	if os.IsNotExist(err) {
+		// Not found, try with .html
+		if f, err := d.d.Open(name + ".html"); err == nil {
+			return f, nil
+		}
+	}
+	return f, err
 }
