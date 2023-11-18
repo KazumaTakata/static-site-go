@@ -1,38 +1,15 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
-	"html/template"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/yuin/goldmark"
 )
 
 func main() {
 
-	tmpl, err := template.ParseFiles("template/template.html", "template/header.html")
-
-	if err != nil {
-		panic("Parse failed!!")
-	}
-
-	dat, _ := os.ReadFile("source/sample.md")
-	var buf bytes.Buffer
-	if err := goldmark.Convert(dat, &buf); err != nil {
-		panic(err)
-	}
-
-	var htmlOutputBuffer bytes.Buffer
-
-	tmpl.Execute(&htmlOutputBuffer, template.HTML(buf.String()))
-
-	fmt.Println(string(htmlOutputBuffer.Bytes()))
-
-	os.WriteFile("dist/index.html", htmlOutputBuffer.Bytes(), 0644)
+	renderHTML()
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -53,17 +30,7 @@ func main() {
 					return
 				}
 
-				dat, _ := os.ReadFile("source/sample.md")
-				var buf bytes.Buffer
-				if err := goldmark.Convert(dat, &buf); err != nil {
-					panic(err)
-				}
-
-				var htmlOutputBuffer bytes.Buffer
-
-				tmpl.Execute(&htmlOutputBuffer, template.HTML(buf.String()))
-
-				os.WriteFile("dist/index.html", htmlOutputBuffer.Bytes(), 0644)
+				renderHTML()
 
 				log.Printf("%s %s\n", event.Name, event.Op)
 

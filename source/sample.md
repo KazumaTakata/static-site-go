@@ -20,5 +20,12 @@
 
 まあさておき、この一文はリズムが良いわけでもないのですが、
 
+```golang
+func main() {
+    fmt.Println("Hello world")
+    fmt.Print("Updated")
+}
+```
+
 
 
