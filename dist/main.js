@@ -10,7 +10,37 @@ window.onload = function () {
             console.log(messages)
             location.reload()
         };
-    } else {
     }
+
+
+    let currentColorMode = "dark"
+
+    let toggle = document.getElementsByClassName("theme-toggler")
+    if (toggle.length > 0) {
+        toggle[0].addEventListener("click", () => {
+            if (currentColorMode == "dark") {
+                if (document.body.classList.contains("dark-mode")) {
+                    document.body.classList.remove("dark-mode")
+                }
+
+                document.body.classList.add("light-mode")
+                currentColorMode = "light"
+                return
+            }
+
+            if (currentColorMode == "light") {
+                if (document.body.classList.contains("light-mode")) {
+                    document.body.classList.remove("light-mode")
+                }
+
+                document.body.classList.add("dark-mode")
+                currentColorMode = "dark"
+                return
+            }
+
+        })
+    }
+
+    
 };
 
