@@ -1,4 +1,4 @@
-package main
+package render
 
 import (
 	"bytes"
@@ -77,7 +77,7 @@ func renderListPageHTML(path string) {
 
 }
 
-func renderHTML() {
+func RenderHTML() {
 
 	destinationPath := "dist"
 	sourcePath := "source"
