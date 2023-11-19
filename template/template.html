@@ -1,15 +1,19 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="/style.css">
-<title>Chat Example</title>
+<title>{{ .Title }}</title>
 <script type="text/javascript" src="/main.js">
 </script>
 </head>
 <body>
     {{template "header" .}}
-    <main>
-        <div class="main-container">
-            {{ . }}
+    <main class="main-container">
+        <h1>{{ .Title }}</h1>
+        {{ range .Tags }} 
+            <span class="post-tag">{{.}}</span>
+        {{end}}
+        <div >
+            {{ .Content }}
         </div>
     </main>
 </body>

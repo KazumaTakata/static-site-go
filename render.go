@@ -8,9 +8,21 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/adrg/frontmatter"
 	"github.com/alecthomas/chroma/styles"
 	"github.com/yuin/goldmark"
 )
+
+type fontMatter struct {
+	Title string   `yaml:"title"`
+	Tags  []string `yaml:"tags"`
+}
+
+type ViewData struct {
+	Title   string
+	Tags    []string
+	Content template.HTML
+}
 
 func renderHTML() {
 
@@ -33,14 +45,22 @@ func renderHTML() {
 			}
 
 			dat, _ := os.ReadFile(path)
+			var matter fontMatter
+			rest, err := frontmatter.Parse(strings.NewReader(string(dat)), &matter)
+			if err != nil {
+			}
+			fmt.Printf("%+v\n", matter)
+
 			var buf bytes.Buffer
-			if err := goldmark.Convert(dat, &buf); err != nil {
+			if err := goldmark.Convert(rest, &buf); err != nil {
 				panic(err)
 			}
 
+			viewData := ViewData{Content: template.HTML(buf.String()), Title: matter.Title, Tags: matter.Tags}
+
 			var htmlOutputBuffer bytes.Buffer
 
-			tmpl.Execute(&htmlOutputBuffer, template.HTML(buf.String()))
+			tmpl.Execute(&htmlOutputBuffer, viewData)
 
 			replacedHTML, _ := replaceCodeParts(htmlOutputBuffer.Bytes(), styles.Monokai)
 
