@@ -13,7 +13,7 @@ body{
 }
 
 body.light-mode {
-    --main-color: white; 
+    --main-color: rgb(227, 227, 227); 
     --color: #292a2d;
 }
 

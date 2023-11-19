@@ -1,0 +1,11 @@
+{{ define "main" }}
+    <main class="main-container">
+        <h1>{{ .Title }}</h1>
+        {{ range .Tags }} 
+            <span class="post-tag">{{.}}</span>
+        {{end}}
+        <div >
+            {{ .Content }}
+        </div>
+    </main>
+{{ end }}

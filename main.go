@@ -71,6 +71,7 @@ type HTMLDir struct {
 }
 
 func (d HTMLDir) Open(name string) (http.File, error) {
+
 	// Try name as supplied
 	f, err := d.d.Open(name)
 	if os.IsNotExist(err) {
@@ -79,5 +80,6 @@ func (d HTMLDir) Open(name string) (http.File, error) {
 			return f, nil
 		}
 	}
+
 	return f, err
 }
