@@ -10,7 +10,7 @@ import (
 	"github.com/KazumaTakata/static-site-go/render"
 )
 
-func serve() {
+func RunDevServer() {
 
 	render.RenderHTML()
 
